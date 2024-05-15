@@ -30,9 +30,8 @@ public class UserLibraryService {
     private RoleRepo pRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Value("${jwt_secret}")
     @Autowired
-    private String secret;
+    private JWTUtil jwtUtil;
 
     public List<UserLibrary> getAllUserLibrary(){
         return userLibraryRepo.findAll();
@@ -77,13 +76,7 @@ public class UserLibraryService {
             return 0;
         }
 
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-                .withSubject("User details")
-                .withIssuer("astService")
-                .build();
-
-        DecodedJWT jwt = verifier.verify(token);
-        String login = jwt.getClaim("login").asString();
+        String login = jwtUtil.validateTokenAndRetrieveClaim(token);
 
         if (login==null || password==null || login.equals("") || password.equals("")){
             return 0;
@@ -109,13 +102,7 @@ public class UserLibraryService {
             return 0;
         }
 
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-                .withSubject("User details")
-                .withIssuer("astService")
-                .build();
-
-        DecodedJWT jwt = verifier.verify(token);
-        String login = jwt.getClaim("login").asString();
+        String login = jwtUtil.validateTokenAndRetrieveClaim(token);
 
         if (login==null || login.equals("")){
             return 0;
